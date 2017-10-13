@@ -3,28 +3,31 @@
 
 printBoard([]).
 printBoard([Head|Tail]) :- 
+		write('|'),
         printRow(Head),
+        printRowSeparator,
         printBoard(Tail).
 
 printRow([]) :- nl.
-printRow([Head|Tail]) :-
-        write(Head),
+printRow([emptyCell|Tail]) :-
         write('  '),
+        write('|'),
+        printRow(Tail).
+
+printRow([Head|Tail]) :- 
+		Head \= emptyCell,
+        write(Head),
+        write('|'),
         printRow(Tail).
 
 
-printInitialBoard([]).
-printInitialBoard([Head|Tail]) :- 
-        printInitialRow(Head),
-        printInitialBoard(Tail).
-
-printInitialRow([]) :- nl.
-printInitialRow([Head|Tail]) :-
-        write('  '),
-        write('|'),
-        printInitialRow(Tail).
+printLineSeparator(1):- write('|'), nl.
+printLineSeparator(NLines):-
+		write('|'),
+		nl,
+		Next is NLines-1,
+		printLineSeparator(Next).
 
 
-
- 
-
+printRowSeparator:-
+		write('------------------------'), nl.
