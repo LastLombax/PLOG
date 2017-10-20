@@ -4,20 +4,20 @@
 
 
 initialBoard([
-	[11, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, ol, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, 22]]).
+	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
+	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
+	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
+	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell]]).
 
 	
-lear:- initialBoard(Board), printRowSeparator, printBoard(Board), startGame(Board).
+lear:- initialBoard(Board), printBoard(Board), startGame(Board).
 
 
-startGame(Board):- getPiece(Board, 1, 2, X), write(X), nl.
+startGame(Board):- setPiece(Board, 1, 2, 'X', X), printBoard(X), nl, move(Board).
 
 
 %------------GET PIECE-------------
@@ -44,10 +44,32 @@ setNLine(1, [Line|Tail], NColumn, Piece, [NewLine| Tail]):-
 		setNColumn(NColumn, Line, Piece, NewLine).
 setNLine(Pos, [Line|Tail], NColumn, Piece, [Line| NewTail]):- 
 		Pos > 1, Next is Pos-1, 
-		setNLine(Next, Line, NColumn, Piece, NewTail).
+		setNLine(Next, Tail, NColumn, Piece, NewTail).
 
 setNColumn(1, [_|Tail], Piece, [Piece| Tail]).
-setNColumn(Pos, [X|Tail], Pos, [X|NewTail]):- 
+setNColumn(Pos, [X|Tail], Piece, [X|NewTail]):- 
 		Pos > 1, 
 		Next is Pos-1, 
 		setNColumn(Next, Tail, Piece, NewTail).
+
+		
+
+%------------GAME STATE-------------
+
+
+
+checkMove(Board, NLine, NCol, Next) :-
+	getPiece(Board, NLine, NCol, Piece),
+	Piece = emptyCell,
+	setPiece(Board, NLine, NCol, 'X', Next).
+
+move(Board) :- 
+	write('Introduza jogada (Linha. <enter> Coluna.)'), nl,
+	read(NLine), nl, read(NCol),
+	format("Linha: ~p , Coluna: ~p", [NLine, NCol]), nl,
+	(checkMove(Board, NLine, NCol, Next);
+		(write('Posição invalida (ja ocupada)'), nl, printBoard(Board))),
+	printBoard(Next),
+	move(Next).
+	
+

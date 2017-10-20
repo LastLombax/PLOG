@@ -1,8 +1,11 @@
 
 
 
-printBoard([]).
-printBoard([Head|Tail]) :- 
+
+printBoard(Board):-printRowSeparator, printBoardAux(Board).
+
+printBoardAux([]).
+printBoardAux([Head|Tail]) :- 
 		write('|'),
         printRow(Head),
         printRowSeparator,
