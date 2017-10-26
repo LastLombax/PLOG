@@ -5,10 +5,9 @@
 printBoard(Board):-printRowSeparator, printBoardAux(Board).
 
 printBoardAux([]).
-printBoardAux([Head|Tail]) :- 
+printBoardAux([Head|Tail]) :-
 		write('|'),
         printRow(Head),
-        printRowSeparator,
         printBoard(Tail).
 
 printRow([]) :- nl.
@@ -17,7 +16,7 @@ printRow([emptyCell|Tail]) :-
         write('|'),
         printRow(Tail).
 
-printRow([Head|Tail]) :- 
+printRow([Head|Tail]) :-
 		Head \= emptyCell,
         write(Head),
         write('|'),
