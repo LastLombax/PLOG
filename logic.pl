@@ -4,8 +4,8 @@
 
 	
 play :-
-	retract(state(Board, Count, Player)),
 	repeat, 
+		retract(state(Board, Count, Player)),
 		format('Count = ~p', [Count]), nl,
 		once(move(Board, Player, NextBoard)),
 		changePlayer(Player, NextPlayer),
