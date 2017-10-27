@@ -3,6 +3,8 @@
 :- include('prints.pl').
 :- include('logic.pl').
 
+:- dynamic state/3.
+
 initialBoard([
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
@@ -18,7 +20,8 @@ lear:- initialBoard(Board), printBoard(Board), startGame(Board).
 
 
 startGame(Board):-
-	 move(Board).
+	 assert(state(Board, 64, 'X ')),
+	 play.
 
 
 
