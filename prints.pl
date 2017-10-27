@@ -33,3 +33,16 @@ printLineSeparator(NLines):-
 
 printRowSeparator:-
 		write('------------------------'), nl.
+
+		
+printCurrentInfo(Board, Player):-
+		printBoard(Board),		
+		printCurrentPlayer(Player).
+
+printCurrentPlayer(Player):-
+	write('It is your turn, '),
+	(
+		Player == 'X ' -> write('Black!'), nl;
+		Player == 'O ' -> write('White!'), nl
+	).
+

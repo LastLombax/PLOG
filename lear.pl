@@ -16,7 +16,7 @@ initialBoard([
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell]]).
 
 
-lear:- initialBoard(Board), printBoard(Board), startGame(Board).
+lear:- initialBoard(Board), startGame(Board).
 
 
 startGame(Board):-
