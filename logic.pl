@@ -2,16 +2,18 @@
 
 %------------GAME STATE-------------
 
-checkMove(Board, NLine, NCol, Next) :-
-getPiece(Board, NLine, NCol, Piece),
-Piece = emptyCell,
-setPiece(Board, NLine, NCol, 'X', Next).
-
 move(Board) :-
-write('Introduza jogada (Linha. <enter> Coluna.)'), nl,
-read(NLine), nl, read(NCol),
-format("Linha: ~p , Coluna: ~p", [NLine, NCol]), nl,
-(checkMove(Board, NLine, NCol, Next);
-(write('Posição invalida (ja ocupada)'), nl, printBoard(Board))),
-printBoard(Next),
-move(Next).
+	write('Type Board Coordinates (Line. <enter> Column.)'), nl,
+	read(NLine), nl, read(NCol),
+	check(Board, NLine, NCol, Next),
+	move(Next).
+
+check(Board, NLine, NCol, Next) :-
+	getPiece(Board, NLine, NCol, X),
+	write(X), nl,
+	(
+		X == emptyCell -> setPiece(Board, NLine, NCol, 'X', Next), printBoard(Next);
+		X \= emptyCell -> write('You CANT put it'), nl
+	).
+	
+% ( condition -> then_condition; else_condition)
