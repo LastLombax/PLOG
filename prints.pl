@@ -1,6 +1,5 @@
 
-
-
+%------------PRINT BOARD-------------
 
 printBoard(Board):-printRowSeparator, printBoardAux(Board).
 
@@ -22,7 +21,6 @@ printRow([Head|Tail]) :-
         write('|'),
         printRow(Tail).
 
-
 printLineSeparator(1):- write('|'), nl.
 printLineSeparator(NLines):-
 		write('|'),
@@ -30,13 +28,15 @@ printLineSeparator(NLines):-
 		Next is NLines-1,
 		printLineSeparator(Next).
 
-
 printRowSeparator:-
 		write('------------------------'), nl.
 
-		
+
+
+%-----------PRINT INFO-------------
+
 printCurrentInfo(Board, Player):-
-		printBoard(Board),		
+		printBoard(Board),
 		printCurrentPlayer(Player).
 
 printCurrentPlayer(Player):-
@@ -45,4 +45,3 @@ printCurrentPlayer(Player):-
 		Player == 'X ' -> write('Black!'), nl;
 		Player == 'O ' -> write('White!'), nl
 	).
-

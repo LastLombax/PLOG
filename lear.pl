@@ -1,5 +1,3 @@
-
-
 :- include('prints.pl').
 :- include('logic.pl').
 
@@ -7,7 +5,7 @@
 
 initialBoard([
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
+	[emptyCell, '2', emptyCell, emptyCell, '5', emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
@@ -16,13 +14,40 @@ initialBoard([
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell]]).
 
 
-lear:- initialBoard(Board), startGame(Board).
+%lear:- initialBoard(Board), startGame(Board).
 
 
 startGame(Board):-
 	 assert(state(Board, 64, 'X ')),
 	 play.
 
+lear:- initialBoard(Board), printBoard(Board), getCoordsFromUser(NLine, NCol), getSubList(Board, NLine, NCol).
+
+% I is the NthRow and H is the Row
+rowN([H|_],1,H).
+rowN([_|T],I,X) :-
+    I1 is I-1,
+    rowN(T,I1,X).
+
+
+% getSubList(Board, NLine, NCol) :-
+
+
+% The Prefix MUST begin with the 1st element(Head) of the list
+
+prefix([ ],L).
+prefix([H|T],[H|U]) :- prefix(T,U).
+
+% The Suffix MUST end with the last element of the list
+
+suffix(S,S).
+suffix(S,[H|T]) :- suffix(S,T).
+
+
+% The Sublist will be the intersection between the Prefix and the Suffix
+
+sublist(Sb,L) :- prefix(Sb,L).
+sublist(Sb,[H|T]) :- sublist(Sb,T).
 
 
 %------------GET PIECE-------------
