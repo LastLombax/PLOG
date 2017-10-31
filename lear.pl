@@ -3,9 +3,10 @@
 
 :- dynamic state/3.
 
+
 initialBoard([
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, '2', emptyCell, emptyCell, '5', emptyCell, emptyCell, emptyCell],
+	[emptyCell, 'X ', 'O ', 'O ', 'X ', emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
@@ -14,23 +15,40 @@ initialBoard([
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell]]).
 
 
-%lear:- initialBoard(Board), startGame(Board).
 
 
 startGame(Board):-
 	 assert(state(Board, 64, 'X ')),
 	 play.
 
-lear:- initialBoard(Board), printBoard(Board), getCoordsFromUser(NLine, NCol), getSubList(Board, NLine, NCol).
+lear:- initialBoard(Board), printBoard(Board), getCoordsFromUser(NLine, NCol), verifyRule(Board, NLine, NCol).
+
 
 % I is the NthRow and H is the Row
-rowN([H|_],1,H).
-rowN([_|T],I,X) :-
+
+
+verifyRule(Board, NLine, NCol) :-
+		getLine(Board, NLine, Line),
+		%transposta da matrix e depois getLine again. Depois das mudanças, voltar a dar transposta.
+		getColu(Board, NCol, Colu),
+		verifyLine(Line),
+		verifyColumn(Col).
+
+
+verifyLine([]).
+verifyLine([H|T]):-
+
+
+
+getLine([H|_],1,H).
+getLine([_|T],I,X) :-
     I1 is I-1,
-    rowN(T,I1,X).
+    getLine(T,I1,X).
 
-
-% getSubList(Board, NLine, NCol) :-
+getColu([],_,[]).
+getColu([H|T], I, [R|X]):-
+   getLine(H, I, R),
+	 getColu(T,I,X).
 
 
 % The Prefix MUST begin with the 1st element(Head) of the list
@@ -48,6 +66,12 @@ suffix(S,[H|T]) :- suffix(S,T).
 
 sublist(Sb,L) :- prefix(Sb,L).
 sublist(Sb,[H|T]) :- sublist(Sb,T).
+
+
+% Verifies if X is member of the list
+
+member(X,[X|T]).
+member(X,[H|T]) :- member(X,T).
 
 
 %------------GET PIECE-------------
@@ -81,3 +105,6 @@ setNColumn(Pos, [X|Tail], Piece, [X|NewTail]):-
 		Pos > 1,
 		Next is Pos-1,
 		setNColumn(Next, Tail, Piece, NewTail).
+
+
+compare2Lists(ListA, ListB):- ListA == ListB.
