@@ -4,7 +4,7 @@
 %initial nodes: initial(nodename).
 %final nodes: final(nodename).
 %edges: arc(from-node, label, to-node).
-:-dynamic listPieces/1.
+:-dynamic index/1.
 
 initial(1).
 final(5).
@@ -36,7 +36,7 @@ arc(11,'X ',12).
 
 listA([emptyCell, 'X ', 'O ', 'O ', 'X ', emptyCell, emptyCell, emptyCell]).
 
-testState:- listA(List), finite_state(1, List, Result).
+testState:- listA(List), assert(index(1)), finite_state(1, List, Result).
 
 
 finite_state(Start, [], Start).
@@ -47,12 +47,32 @@ finite_state(Start, [Input | Inputs], Finish) :-
 		 processNext(Next),
      finite_state(Next, Inputs, Finish).
 
-
 processNext(Next):-
-		 Next == 5, write('5'), nl.
+		Next == 6, captureCaseA.
 processNext(Next):-
-		 Next == 9, write('9'), nl.
+		 Next == 5, captureCaseA.
 processNext(Next):-
-		 Next == 12, write('12'), nl.
+		 Next == 9, captureCaseB.
+processNext(Next):-
+		 Next == 12, captureCaseC.
 processNext(Next):-
 		 write('continue'), nl.
+
+
+captureCaseA:-
+	write('5'), nl.
+
+captureCaseB:-
+	write('9'), nl.
+
+captureCaseC:-
+	write('12'), nl.
+
+
+
+
+
+
+
+%se o proximo for 5 ou 12 é um caso
+%se o proximo for 9, tem de continuar a ler até nao encontrar um O.
