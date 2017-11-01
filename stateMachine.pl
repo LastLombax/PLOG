@@ -4,8 +4,8 @@
 %initial nodes: initial(nodename).
 %final nodes: final(nodename).
 %edges: arc(from-node, label, to-node).
-:-dynamic index/1.
-
+:- dynamic index/1.
+:- dynamic analiseList/1.
 initial(1).
 final(5).
 final(9).
@@ -70,7 +70,9 @@ captureCaseC:-
 
 
 
-
+append([], Ys, Ys).
+append([X|Xs],Ys, [X|Zs]):-
+	 append(Xs,Ys,Zs).
 
 
 
