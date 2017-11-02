@@ -34,22 +34,25 @@ arc(11,'X ',12).
 
 listA([emptyCell, 'X ', 'O ', 'O ', 'X ', emptyCell, emptyCell, emptyCell]).
 
-testState:- listA(List), assert(index(1)), finite_state(1, List, Result).
+testState:- listA(List), assert(index(1)), assert(analiseList([])), finite_state(1, List, Result, 1). % First state and First index(1st element)
 
 
-finite_state(Start, [], Start).
-finite_state(done, _, done) :- !.
-finite_state(Start, [Input | Inputs], Finish) :-
+finite_state(Start, [], Start, _).
+finite_state(done, _, done, _) :- !.
+finite_state(Start, [Input | Inputs], Finish, Index) :-
 		 write('Start: '), write(Start), nl,
-		 retract(index(Index)),
+		 retract(index(Index)), %may not be needed
 		 retract(analiseList(AuxList)),
      arc(Start, Input, Next),
+		 length(AuxList, Length),
+		 write(Next), nl,
 		 (
-		 		 Next == 1 -> emptyList(AuxList);
-				 Next > 1 -> addToList(AuxList, Index).
-		 )
+		 		 Next == 1 , Length > 0 -> emptyList(AuxList);
+				 Next > 1 -> addToList(AuxList, Index)
+		 ),
 		 processNext(Next),
-     finite_state(Next, Inputs, Finish).
+		 Ind is Index+1,
+     finite_state(Next, Inputs, Finish, Ind).
 
 
 processNext(Next):-
@@ -71,15 +74,45 @@ captureCaseB:-
 captureCaseC:-
 	write('12'), nl.
 
+%same as just keeping the last item, if it isn't an emptyCell
+emptyList(AuxList):-
+	last(AuxList, LastElem),
+	(
+		LastElem == emptyCell -> assert(analiseList([]));
+		LastElem \= emptyCell -> assert(analiseList([LastElem]))
+	).
 
-emptyList(List).
 
-addToList(List, Index).
+last([Head],X):-
+		X = Head.
+last([_|Tail],X):-
+		last(Tail,X).
+
+
+addToList(AuxList, Index):-
+	append(AuxList, Index).
 
 
 append([], Ys, Ys).
 append([X|Xs],Ys, [X|Zs]):-
 	 append(Xs,Ys,Zs).
+
+length(List, Length) :-
+    (
+		var(Length) ->  length(List, 0, Length);
+          Length >= 0,
+          length1(List, Length)
+		).
+
+length([], Length, Length).
+length([_|L], N, Length) :-
+        N1 is N+1,
+        length(L, N1, Length).
+
+length1([], 0) :- !.
+length1([_|L], Length) :-
+        N1 is Length-1,
+        length1(L, N1).
 
 
 
