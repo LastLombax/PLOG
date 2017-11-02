@@ -41,19 +41,32 @@ finite_state(Start, [], Start, _).
 finite_state(done, _, done, _) :- !.
 finite_state(Start, [Input | Inputs], Finish, Index) :-
 		 write('Start: '), write(Start), nl,
-		 retract(index(Index)), %may not be needed
 		 retract(analiseList(AuxList)),
      arc(Start, Input, Next),
 		 length(AuxList, Length),
 		 write(Next), nl,
+		 write(Length), nl,
 		 (
-		 		 Next == 1 , Length > 0 -> emptyList(AuxList);
-				 Next > 1 -> addToList(AuxList, Index)
+		 		Length > 0 -> verifyState(Next, Index);
+				Length =< 0 -> addToEmptyList(AuxList, Input, Index)
 		 ),
 		 processNext(Next),
 		 Ind is Index+1,
      finite_state(Next, Inputs, Finish, Ind).
 
+addToEmptyList(AuxList, Input, Index):-
+		(
+		Input \= emptyCell -> addToList(AuxList, Index);
+		Input == emptyCell -> assert(analiseList([])), write('do not'), nl
+		).
+
+
+
+verifyState(Next, Index):-
+	(
+ 			Next == 1 -> write('clean list'), nl, emptyList(AuxList);
+		  Next > 1 -> addToList(AuxList, Index)
+	).
 
 processNext(Next):-
 		 Next == 5, captureCaseA.
@@ -90,29 +103,31 @@ last([_|Tail],X):-
 
 
 addToList(AuxList, Index):-
-	append(AuxList, Index).
+		write('add'), nl,
+		append(AuxList, Index, NewAuxList),
+		assert(analiseList(NewAuxList)).
 
 
-append([], Ys, Ys).
-append([X|Xs],Ys, [X|Zs]):-
-	 append(Xs,Ys,Zs).
+%append([], Ys, Ys).
+%append([X|Xs],Ys, [X|Zs]):-
+	% append(Xs,Ys,Zs).
 
-length(List, Length) :-
-    (
-		var(Length) ->  length(List, 0, Length);
-          Length >= 0,
-          length1(List, Length)
-		).
+%length(List, Length) :-
+%    (
+	%	var(Length) ->  length(List, 0, Length);
+%          Length >= 0,
+%          length1(List, Length)
+	%	).
 
-length([], Length, Length).
-length([_|L], N, Length) :-
-        N1 is N+1,
-        length(L, N1, Length).
+%length([], Length, Length).
+%length([_|L], N, Length) :-
+%        N1 is N+1,
+%        length(L, N1, Length).
 
-length1([], 0) :- !.
-length1([_|L], Length) :-
-        N1 is Length-1,
-        length1(L, N1).
+%length1([], 0) :- !.
+%length1([_|L], Length) :-
+%        N1 is Length-1,
+  %      length1(L, N1).
 
 
 
