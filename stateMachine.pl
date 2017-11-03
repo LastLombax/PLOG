@@ -46,6 +46,8 @@ finite_state(Start, [Input | Inputs], Finish, Index) :-
 		 length(AuxList, Length),
 		 write(Next), nl,
 		 write(Length), nl,
+		 write('Input: '), write(Input), nl,
+		 write('AuxList: '), write(AuxList), nl,
 		 (
 		 		Length > 0 -> verifyState(Next, Index);
 				Length =< 0 -> addToEmptyList(AuxList, Input, Index)
@@ -104,7 +106,9 @@ last([_|Tail],X):-
 
 addToList(AuxList, Index):-
 		write('add'), nl,
-		append(AuxList, Index, NewAuxList),
+		append(AuxList, [Index], NewAuxList),
+		write('AuxList: '), write(AuxList), nl,
+		write('NewAuxList: '), write(NewAuxList), nl,
 		assert(analiseList(NewAuxList)).
 
 
