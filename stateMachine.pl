@@ -41,13 +41,16 @@ final(9).
 final(12).
 
 
-listA([emptyCell, 'X ', 'O ', 'O ', 'X ', emptyCell, emptyCell, 'X ']).
+%listA([emptyCell, 'X ', 'O ', 'O ', 'X ', emptyCell, emptyCell, 'X ']).
 
 %listA(['X ', 'X ', 'O ', 'O ', 'O ', emptyCell, 'X ', 'X ']).
 
-%listA(['O ', 'O ', 'O ', 'O ', 'O ', 'X ', 'X ', 'X ']).
+listA(['O ', 'O ', 'O ', 'X ', 'O ', 'O ', 'X ', 'X ']).
 
-testState:- listA(List), assert(analiseList([])), finite_state(1, List, Result, 1). % First state and First index(1st element)
+testState(List, NewList):-assert(matrixList(List)), assert(analiseList([])),
+	finite_state(1, List, Result, 0), retract(matrixList(NewList)).
+
+	  % First state and index = 0(1st element)
 
 
 finite_state(Start, [], Start, _).
@@ -62,7 +65,7 @@ finite_state(Start, [Input | Inputs], Finish, Index) :-
 				Length == 0 -> addToEmptyList(AuxList, Input, Index)
 		 ),
 		 processNext(Next),
-		 Ind is Index+1,		
+		 Ind is Index+1,
      finite_state(Next, Inputs, Finish, Ind).
 
 addToEmptyList(AuxList, Input, Index):-
@@ -83,51 +86,37 @@ emptyList:-
 
 addToList(AuxList, Index):-
 		append(AuxList, [Index], NewAuxList),
-		write('List after add: '), write(NewAuxList), nl,
 		assert(analiseList(NewAuxList)).
 
 
 processNext(Next):-
-		 Next == 5, captureCaseA.
+		 Next == 5, capturePiecesOnList.
 processNext(Next):-
-		 Next == 12, captureCaseC.
+		 Next == 12, capturePiecesOnList.
 processNext(Next).
 
 processNextB:-
-	  captureCaseB.
+	  capturePiecesOnList.
+
+capturePiecesOnList:-
+	retract(matrixList(MatrixList)),
+	retract(analiseList(CurrentList)),
+	capturePieces(CurrentList, MatrixList, NewMatrixList),
+	emptyList.
 
 
-captureCaseA:-
-	write('Captura 5: '), nl, retract(analiseList(CurrentList)), write('Lista caralho: '), write(CurrentList), nl, capturePiecesA(CurrentList), emptyList.
+capturePieces([], MatrixList, NewMatrixList) :-	assert(matrixList(NewMatrixList)).
+capturePieces([H|T], MatrixList, NewMatrixList):-
+	replace(MatrixList, H, 'X ', TheMatrixList),
+	capturePieces(T, TheMatrixList, TheMatrixList).
 
 
-captureCaseB:-
-	write('Captura 9: '), nl, retract(analiseList(CurrentList)), write('Lista caralho: '), write(CurrentList), nl, capturePiecesB(CurrentList), emptyList.
-
-
-captureCaseC:-
-		write('Captura 12: '), nl, retract(analiseList(CurrentList)), write('Lista caralho: '), write(CurrentList), nl, capturePiecesC(CurrentList), emptyList.
-
-capturePiecesA(CurrentList):-
-	write('capture pieces here '), nl.
-
-
-
-capturePiecesB(CurrentList):-
-	write('capture pieces here '), nl.
-
-
-
-capturePiecesC(CurrentList):-
-	write('capture pieces here '), nl,
-	write('AuxList: '), write(CurrentList), nl,
-	listA(List),
-	write('ListA: '), write(List), nl.
-
-
-
-
-
+replace([_|T], 0, X, [X|T]).
+replace([H|T], I, X, [H|R]):-
+		I > -1,
+		NI is I-1,
+		replace(T, NI, X, R), !.
+replace(L, _, _, L).
 
 
 last([Head],X):-
