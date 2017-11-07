@@ -48,10 +48,8 @@ final(12).
 listA(['O ', 'O ', 'O ', 'X ', 'O ', 'O ', 'X ', 'X ']).
 
 testState(List, NewList):-assert(matrixList(List)), assert(analiseList([])),
-	finite_state(1, List, Result, 0), retract(matrixList(NewList)), write('NewListFuckers: '), write(NewList), nl,
-	assert(matrixList([])), assert(analiseList([])).
-
-	  % First state and index = 0(1st element)
+		finite_state(1, List, Result, 0), retract(matrixList(NewList)), write('NewListFinal: '), write(NewList), nl,
+		retract(analiseList([])).	  % First state and index = 0(1st element)
 
 
 finite_state(Start, [], Start, _).
@@ -111,7 +109,7 @@ capturePiecesOnList:-
 
 
 capturePieces([], MatrixList, NewMatrixList) :-
-write('NewMatrixList: '), write(MatrixList), nl,assert(matrixList(NewMatrixList)).
+	write('NewMatrixList: '), write(MatrixList), nl,assert(matrixList(NewMatrixList)).
 capturePieces([H|T], MatrixList, NewMatrixList):-
 	replace(MatrixList, H, 'X ', TheMatrixList),
 	capturePieces(T, TheMatrixList, TheMatrixList).
