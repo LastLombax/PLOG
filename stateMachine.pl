@@ -48,7 +48,8 @@ final(12).
 listA(['O ', 'O ', 'O ', 'X ', 'O ', 'O ', 'X ', 'X ']).
 
 testState(List, NewList):-assert(matrixList(List)), assert(analiseList([])),
-	finite_state(1, List, Result, 0), retract(matrixList(NewList)).
+	finite_state(1, List, Result, 0), retract(matrixList(NewList)), write('NewListFuckers: '), write(NewList), nl,
+	assert(matrixList([])), assert(analiseList([])).
 
 	  % First state and index = 0(1st element)
 
@@ -60,6 +61,7 @@ finite_state(Start, [Input | Inputs], Finish, Index) :-
 		 length(AuxList, Length),
 		 it( checkCaseB(Start, Input), processNextB),
 		 retract(analiseList(AuxList)),
+	 	 write('AuxList before: '), write(AuxList), nl,
 		 (
 		 		Length > 0 -> verifyState(AuxList, Next, Index);
 				Length == 0 -> addToEmptyList(AuxList, Input, Index)
@@ -101,11 +103,15 @@ processNextB:-
 capturePiecesOnList:-
 	retract(matrixList(MatrixList)),
 	retract(analiseList(CurrentList)),
+	write('On capture: '), nl,
+	write('CurrentList: '), write(CurrentList), nl,
+	write('MatrixList: '), write(MatrixList), nl,
 	capturePieces(CurrentList, MatrixList, NewMatrixList),
 	emptyList.
 
 
-capturePieces([], MatrixList, NewMatrixList) :-	assert(matrixList(NewMatrixList)).
+capturePieces([], MatrixList, NewMatrixList) :-
+write('NewMatrixList: '), write(MatrixList), nl,assert(matrixList(NewMatrixList)).
 capturePieces([H|T], MatrixList, NewMatrixList):-
 	replace(MatrixList, H, 'X ', TheMatrixList),
 	capturePieces(T, TheMatrixList, TheMatrixList).
