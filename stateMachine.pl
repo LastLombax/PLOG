@@ -40,16 +40,17 @@ final(5).
 final(9).
 final(12).
 
+player(Piece).
+enemyPlayer(EnemyPiece).
 
-%listA([emptyCell, 'X ', 'O ', 'O ', 'X ', emptyCell, emptyCell, 'X ']).
 
-%listA(['X ', 'X ', 'O ', 'O ', 'O ', emptyCell, 'X ', 'X ']).
-
-%listA(['O ', 'O ', 'O ', 'X ', 'O ', 'O ', 'X ', 'X ']).
-
-testState(List, NewList):-assert(matrixList(List)), assert(analiseList([])),
+testState(List, NewList, CurrPlayer):- assert(matrixList(List)), assert(analiseList([])),
+		setCurrPlayer(CurrPlayer), write('CurrPlayer: '), write(CurrPlayer), nl,
 		finite_state(1, List, Result, 0), retract(matrixList(NewList)), write('NewListFinal: '), write(NewList), nl.
-	%	retract(analiseList(_)).	  % First state and index = 0(1st element)
+
+setCurrPlayer(CurrPlayer):-
+	player(CurrPlayer),
+	ite(CurrPlayer == 'X ', enemyPlayer('O '), enemyPlayer('X ')).
 
 
 finite_state(Start, [], Start, _).
