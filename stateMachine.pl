@@ -8,66 +8,90 @@
 :- dynamic analiseList/1.
 %f(+State, +Input, -NextState)
 
-arc(_,emptyCell, 1).
+% for Black Team Player
+arcX(_,emptyCell, 1).
 
-arc(1,'O ',2).
-arc(2,'X ',1).
-arc(2,'O ',3).
-arc(3,'O ',3).
-arc(3,'X ',4).
-arc(4,'O ',1).
-arc(4,'X ',5).
-arc(5,'O ',2).
-arc(5,'X ',6).
+arcX(1,'O ',2).
+arcX(2,'X ',1).
+arcX(2,'O ',3).
+arcX(3,'O ',3).
+arcX(3,'X ',4).
+arcX(4,'O ',1).
+arcX(4,'X ',5).
+arcX(5,'O ',2).
+arcX(5,'X ',6).
 
-arc(1,'X ',6).
-arc(6,'X ',7).
-arc(7,'X ',7).
-arc(7,'O ',8).
-arc(8,'O ',9).
-arc(9,'O ',9).
-arc(9,'X ',6).
+arcX(1,'X ',6).
+arcX(6,'X ',7).
+arcX(7,'X ',7).
+arcX(7,'O ',8).
+arcX(8,'O ',9).
+arcX(9,'O ',9).
+arcX(9,'X ',6).
 
-arc(6,'O ',10).
-arc(10,'X ', 1).
-arc(10,'O ',11).
-arc(11,'O ',11).
-arc(11,'X ',12).
-arc(12,'X ', 6).
-arc(12,'O ', 2).
+arcX(6,'O ',10).
+arcX(10,'X ', 1).
+arcX(10,'O ',11).
+arcX(11,'O ',11).
+arcX(11,'X ',12).
+arcX(12,'X ', 6).
+arcX(12,'O ', 2).
+
+% for White Team Player
+arcO(_,emptyCell, 1).
+
+arcO(1,'X ',2).
+arcO(2,'O ',1).
+arcO(2,'X ',3).
+arcO(3,'X ',3).
+arcO(3,'O ',4).
+arcO(4,'X ',1).
+arcO(4,'O ',5).
+arcO(5,'X ',2).
+arcO(5,'O ',6).
+
+arcO(1,'O ',6).
+arcO(6,'O ',7).
+arcO(7,'O ',7).
+arcO(7,'X ',8).
+arcO(8,'X ',9).
+arcO(9,'X ',9).
+arcO(9,'O ',6).
+
+arcO(6,'X ',10).
+arcO(10,'O ', 1).
+arcO(10,'X ',11).
+arcO(11,'X ',11).
+arcO(11,'O ',12).
+arcO(12,'O ', 6).
+arcO(12,'X ', 2).
+
 
 final(5).
 final(9).
 final(12).
 
-player(Piece).
-enemyPlayer(EnemyPiece).
-
-
 testState(List, NewList, CurrPlayer):- assert(matrixList(List)), assert(analiseList([])),
-		setCurrPlayer(CurrPlayer), write('CurrPlayer: '), write(CurrPlayer), nl,
-		finite_state(1, List, Result, 0), retract(matrixList(NewList)), write('NewListFinal: '), write(NewList), nl.
-
-setCurrPlayer(CurrPlayer):-
-	player(CurrPlayer),
-	ite(CurrPlayer == 'X ', enemyPlayer('O '), enemyPlayer('X ')).
+		finite_state(1, List, Result, 0, CurrPlayer), retract(matrixList(NewList)), emptyList, write('NewListFinal: '), write(NewList), nl.
 
 
-finite_state(Start, [], Start, _).
-finite_state(done, _, done, _) :- !.
-finite_state(Start, [Input | Inputs], Finish, Index) :-
-		 arc(Start, Input, Next),
-		 it( checkCaseB(Start, Input), capturePiecesOnList),
+finite_state(Start, [], Start, _, _).
+finite_state(done, _, done, _, _) :- !.
+finite_state(Start, [Input | Inputs], Finish, Index, Player) :-
+		 write('Index: '),  write(Index), nl,
+		 ite(Player == 'X ',  arcX(Start, Input, Next), arcO(Start, Input, Next)),
+		 it( checkCaseB(Start, Input,Player), capturePiecesOnList(Player)),
 		 analiseList(AuxList),
 		 length(AuxList, Length),
+		 write('Next: '), write(Next), nl,
 	 	 write('AuxList before: '), write(AuxList), nl,
 		 (
 		 		Length > 0 -> verifyState(AuxList, Next, Index);
 				Length == 0 -> addToEmptyList(AuxList, Input, Index)
 		 ),
-		 processNext(Next),
+		 processNext(Next, Player),
 		 Ind is Index+1,
-     finite_state(Next, Inputs, Finish, Ind).
+     finite_state(Next, Inputs, Finish, Ind, Player).
 
 addToEmptyList(AuxList, Input, Index):-
 		(
@@ -75,8 +99,15 @@ addToEmptyList(AuxList, Input, Index):-
 			Input == emptyCell -> emptyList
 		).
 
-checkCaseB(State, Input):-
-		State == 9, Input \= 'O '.
+checkCaseB(State, Input,Player):-
+	  ite(Player == 'X ',  checkCaseBX(State, Input), checkCaseBO(State, Input)).
+
+checkCaseBX(State, Input):-
+	  State == 9, Input \= 'O '.
+
+checkCaseBO(State, Input):-
+		State == 9, Input \= 'X '.
+
 
 verifyState(AuxList, Next, Index):-
 	addToList(AuxList, Index),
@@ -90,35 +121,36 @@ addToList(AuxList, Index):-
 		asserta(analiseList(NewAuxList)).
 
 
-processNext(Next):-
-		 Next == 5, capturePiecesOnList.
-processNext(Next):-
-		 Next == 12, capturePiecesOnList.
-processNext(Next).
+processNext(Next,Player):-
+		 Next == 5, capturePiecesOnList(Player).
+processNext(Next,Player):-
+		 Next == 12, capturePiecesOnList(Player).
+processNext(Next, Player).
 
 
-capturePiecesOnList:-
+capturePiecesOnList(Player):-
 	retract(matrixList(MatrixList)),
 	retract(analiseList(CurrentList)),
 	write('On capture: '), nl,
 	write('CurrentList: '), write(CurrentList), nl,
 	write('MatrixList: '), write(MatrixList), nl,
-	capturePieces(CurrentList, MatrixList),
+	capturePieces(CurrentList, MatrixList,Player),
 	emptyList.
 
 
-capturePieces([], MatrixList) :-
+capturePieces([], MatrixList, _) :-
 	write('NewMatrixList: '), write(MatrixList), nl, asserta(matrixList(MatrixList)).
-capturePieces([H|T], MatrixList):-
-	replace(MatrixList, H, 'X ', TheMatrixList),
-	capturePieces(T, TheMatrixList).
+capturePieces([H|T], MatrixList, Player):-
+	%ite(Player == 'X ', replace(MatrixList, H, 'X ', TheMatrixList ), replace(MatrixList, H, 'O ', TheMatrixList) ),
+	replace(MatrixList, H, Player, TheMatrixList ),
+	capturePieces(T, TheMatrixList,Player).
 
 
-replace([_|T], 0, X, [X|T]).
-replace([H|T], I, X, [H|R]):-
+replace([_|T], 0, PlayerPiece, [PlayerPiece|T]).
+replace([H|T], I, PlayerPiece, [H|R]):-
 		I > -1,
 		NI is I-1,
-		replace(T, NI, X, R), !.
+		replace(T, NI, PlayerPiece, R), !.
 replace(L, _, _, L).
 
 
@@ -136,9 +168,3 @@ ite(_, _, Else):- Else.
 
 it(If, Then):- If, !, Then.
 it(_,_).
-
-
-
-
-%se o proximo for 5 ou 12 é um caso
-%se o proximo for 9, tem de continuar a ler até nao encontrar um O.
