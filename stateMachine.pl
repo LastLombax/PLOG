@@ -45,20 +45,20 @@ final(12).
 
 %listA(['X ', 'X ', 'O ', 'O ', 'O ', emptyCell, 'X ', 'X ']).
 
-listA(['O ', 'O ', 'O ', 'X ', 'O ', 'O ', 'X ', 'X ']).
+%listA(['O ', 'O ', 'O ', 'X ', 'O ', 'O ', 'X ', 'X ']).
 
 testState(List, NewList):-assert(matrixList(List)), assert(analiseList([])),
-		finite_state(1, List, Result, 0), retract(matrixList(NewList)), write('NewListFinal: '), write(NewList), nl,
-		retract(analiseList([])).	  % First state and index = 0(1st element)
+		finite_state(1, List, Result, 0), retract(matrixList(NewList)), write('NewListFinal: '), write(NewList), nl.
+	%	retract(analiseList(_)).	  % First state and index = 0(1st element)
 
 
 finite_state(Start, [], Start, _).
 finite_state(done, _, done, _) :- !.
 finite_state(Start, [Input | Inputs], Finish, Index) :-
 		 arc(Start, Input, Next),
+		 it( checkCaseB(Start, Input), capturePiecesOnList),
+		 analiseList(AuxList),
 		 length(AuxList, Length),
-		 it( checkCaseB(Start, Input), processNextB),
-		 retract(analiseList(AuxList)),
 	 	 write('AuxList before: '), write(AuxList), nl,
 		 (
 		 		Length > 0 -> verifyState(AuxList, Next, Index);
@@ -79,14 +79,14 @@ checkCaseB(State, Input):-
 
 verifyState(AuxList, Next, Index):-
 	addToList(AuxList, Index),
-	it(Next == 1, emptyList(AuxList)).
+	it(Next == 1, emptyList).
 
 emptyList:-
-		assert(analiseList([])).
+		asserta(analiseList([])).
 
 addToList(AuxList, Index):-
 		append(AuxList, [Index], NewAuxList),
-		assert(analiseList(NewAuxList)).
+		asserta(analiseList(NewAuxList)).
 
 
 processNext(Next):-
@@ -95,8 +95,6 @@ processNext(Next):-
 		 Next == 12, capturePiecesOnList.
 processNext(Next).
 
-processNextB:-
-	  capturePiecesOnList.
 
 capturePiecesOnList:-
 	retract(matrixList(MatrixList)),
@@ -104,15 +102,15 @@ capturePiecesOnList:-
 	write('On capture: '), nl,
 	write('CurrentList: '), write(CurrentList), nl,
 	write('MatrixList: '), write(MatrixList), nl,
-	capturePieces(CurrentList, MatrixList, NewMatrixList),
+	capturePieces(CurrentList, MatrixList),
 	emptyList.
 
 
-capturePieces([], MatrixList, NewMatrixList) :-
-	write('NewMatrixList: '), write(MatrixList), nl,assert(matrixList(NewMatrixList)).
-capturePieces([H|T], MatrixList, NewMatrixList):-
+capturePieces([], MatrixList) :-
+	write('NewMatrixList: '), write(MatrixList), nl, asserta(matrixList(MatrixList)).
+capturePieces([H|T], MatrixList):-
 	replace(MatrixList, H, 'X ', TheMatrixList),
-	capturePieces(T, TheMatrixList, TheMatrixList).
+	capturePieces(T, TheMatrixList).
 
 
 replace([_|T], 0, X, [X|T]).
