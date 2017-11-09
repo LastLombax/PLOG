@@ -71,28 +71,16 @@ final(5).
 final(9).
 final(12).
 
-%SO PARA CONCLUSOES:
-
-%Para peça X e inimigo O :
-	% Caso X OOO X e semelhantes funcional (Caso A);
-	% Caso XX OOOO(tudo O's) funcional(Caso B);
-	% Caso OOO XX -> CONFIRM
-
 
 testState(List, NewList, CurrPlayer):- assert(matrixList(List)), assert(analiseList([])),
-		finite_state(1, List, Result, 0, CurrPlayer), retract(matrixList(NewList)), emptyList, write('NewListFinal: '), write(NewList), nl.
-
+		finite_state(1, List, Result, 0, CurrPlayer), retract(matrixList(NewList)), emptyList.
 
 finite_state(Start, [], Start, _, _).
 finite_state(done, _, done, _, _) :- !.
 finite_state(Start, [Input | Inputs], Finish, Index, Player) :-
-		 %write('Index: '),  write(Index), nl,
 		 ite(Player == 'X ',  arcX(Start, Input, Next), arcO(Start, Input, Next)),
-		% it( checkCaseB(Start, Input,Player, Index), capturePiecesOnList(Player)),
 		 analiseList(AuxList),
 		 length(AuxList, Length),
-		 write('Next: '), write(Next), nl,
-	 	 write('AuxList before: '), write(AuxList), nl,
 		 (
 		 		Length > 0 -> verifyState(AuxList, Next, Index);
 				Length == 0 -> addToEmptyList(AuxList, Input, Index)
@@ -140,17 +128,12 @@ processNext(Next, Player).
 capturePiecesOnList(Player):-
 	retract(matrixList(MatrixList)),
 	retract(analiseList(CurrentList)),
-	write('On capture: '), nl,
-	write('CurrentList: '), write(CurrentList), nl,
-	write('MatrixList: '), write(MatrixList), nl,
 	capturePieces(CurrentList, MatrixList,Player),
 	emptyList.
 
 
-capturePieces([], MatrixList, _) :-
-	write('NewMatrixList: '), write(MatrixList), nl, asserta(matrixList(MatrixList)).
+capturePieces([], MatrixList, _) :- asserta(matrixList(MatrixList)).
 capturePieces([H|T], MatrixList, Player):-
-	%ite(Player == 'X ', replace(MatrixList, H, 'X ', TheMatrixList ), replace(MatrixList, H, 'O ', TheMatrixList) ),
 	replace(MatrixList, H, Player, TheMatrixList ),
 	capturePieces(T, TheMatrixList,Player).
 

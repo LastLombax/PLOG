@@ -1,15 +1,16 @@
 :- include('prints.pl').
 :- include('logic.pl').
+:- include('stateMachine.pl').
 
 :- dynamic state/3.
 
 
 initialBoard([
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
+	[emptyCell, emptyCell, emptyCell, emptyCell, 'X ', emptyCell, emptyCell, emptyCell],
 	[emptyCell, 'X ', 'O ', 'O ', 'X ', emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
+	[emptyCell, emptyCell, emptyCell, 'X ', 'X ', emptyCell, emptyCell, emptyCell],
+	[emptyCell, emptyCell, emptyCell, 'O ', 'O ', emptyCell, emptyCell, emptyCell],
+	[emptyCell, emptyCell, emptyCell, 'O ', 'O ', emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell]]).
@@ -27,17 +28,14 @@ lear:- initialBoard(Board), printBoard(Board), getCoordsFromUser(NLine, NCol), v
 % I is the NthRow and H is the Row
 
 
-verifyRule(Board, NLine, NCol) :-
+verifyRule(Board, NLine, NCol):-
 		getLine(Board, NLine, Line),
+		testState(Line, NewLine, 'X '),
+		write('Old Line: '), write(Line), nl,
+		transpose(Board, TBoard),
+		write('New Line for Board: '), write(NewLine), nl,
 		%transposta da matrix e depois getLine again. Depois das mudanças, voltar a dar transposta.
-		getColu(Board, NCol, Colu),
-		verifyLine(Line),
-		verifyColumn(Col).
-
-
-verifyLine([]).
-verifyLine([H|T]):-
-
+		getColu(Board, NCol, Colu).
 
 
 getLine([H|_],1,H).
@@ -67,11 +65,6 @@ suffix(S,[H|T]) :- suffix(S,T).
 sublist(Sb,L) :- prefix(Sb,L).
 sublist(Sb,[H|T]) :- sublist(Sb,T).
 
-
-% Verifies if X is member of the list
-
-member(X,[X|T]).
-member(X,[H|T]) :- member(X,T).
 
 
 %------------GET PIECE-------------
@@ -106,5 +99,3 @@ setNColumn(Pos, [X|Tail], Piece, [X|NewTail]):-
 		Next is Pos-1,
 		setNColumn(Next, Tail, Piece, NewTail).
 
-
-compare2Lists(ListA, ListB):- ListA == ListB.
