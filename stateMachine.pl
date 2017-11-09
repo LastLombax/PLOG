@@ -71,6 +71,14 @@ final(5).
 final(9).
 final(12).
 
+%SO PARA CONCLUSOES:
+
+%Para peça X e inimigo O :
+	% Caso X OOO X e semelhantes funcional (Caso A);
+	% Caso XX OOOO(tudo O's) funcional(Caso B);
+	% Caso OOO XX -> CONFIRM
+
+
 testState(List, NewList, CurrPlayer):- assert(matrixList(List)), assert(analiseList([])),
 		finite_state(1, List, Result, 0, CurrPlayer), retract(matrixList(NewList)), emptyList, write('NewListFinal: '), write(NewList), nl.
 
@@ -78,9 +86,9 @@ testState(List, NewList, CurrPlayer):- assert(matrixList(List)), assert(analiseL
 finite_state(Start, [], Start, _, _).
 finite_state(done, _, done, _, _) :- !.
 finite_state(Start, [Input | Inputs], Finish, Index, Player) :-
-		 write('Index: '),  write(Index), nl,
+		 %write('Index: '),  write(Index), nl,
 		 ite(Player == 'X ',  arcX(Start, Input, Next), arcO(Start, Input, Next)),
-		 it( checkCaseB(Start, Input,Player), capturePiecesOnList(Player)),
+		% it( checkCaseB(Start, Input,Player, Index), capturePiecesOnList(Player)),
 		 analiseList(AuxList),
 		 length(AuxList, Length),
 		 write('Next: '), write(Next), nl,
@@ -89,6 +97,7 @@ finite_state(Start, [Input | Inputs], Finish, Index, Player) :-
 		 		Length > 0 -> verifyState(AuxList, Next, Index);
 				Length == 0 -> addToEmptyList(AuxList, Input, Index)
 		 ),
+		 it( checkCaseB(Start, Input,Player, Index), capturePiecesOnList(Player)),
 		 processNext(Next, Player),
 		 Ind is Index+1,
      finite_state(Next, Inputs, Finish, Ind, Player).
@@ -99,14 +108,14 @@ addToEmptyList(AuxList, Input, Index):-
 			Input == emptyCell -> emptyList
 		).
 
-checkCaseB(State, Input,Player):-
-	  ite(Player == 'X ',  checkCaseBX(State, Input), checkCaseBO(State, Input)).
+checkCaseB(State, Input,Player, Index):-
+	  ite(Player == 'X ',  checkCaseBX(State, Input, Index), checkCaseBO(State, Input, Index)).
 
-checkCaseBX(State, Input):-
-	  State == 9, Input \= 'O '.
+checkCaseBX(State, Input, Index):-
+	  State == 9, (Input \= 'O ' ; Index == 7).
 
-checkCaseBO(State, Input):-
-		State == 9, Input \= 'X '.
+checkCaseBO(State, Input, Index):-
+	  State == 9, (Input \= 'X '; Index == 7).
 
 
 verifyState(AuxList, Next, Index):-
