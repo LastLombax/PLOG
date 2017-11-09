@@ -82,7 +82,7 @@ finite_state(Start, [Input | Inputs], Finish, Index, Player) :-
 		 analiseList(AuxList),
 		 length(AuxList, Length),
 		 (
-		 		Length > 0 -> verifyState(AuxList, Next, Index);
+		 		Length > 0 -> verifyState(AuxList, Next, Index, State);
 				Length == 0 -> addToEmptyList(AuxList, Input, Index)
 		 ),
 		 it( checkCaseB(Start, Input,Player, Index), capturePiecesOnList(Player)),
@@ -106,9 +106,12 @@ checkCaseBO(State, Input, Index):-
 	  State == 9, (Input \= 'X '; Index == 7).
 
 
-verifyState(AuxList, Next, Index):-
+verifyState(AuxList, Next, Index,CurrentState):-
 	addToList(AuxList, Index),
-	it(Next == 1, emptyList).
+	it(checkState(CurrentState, Next), emptyList).
+
+checkState(CurrentState, Next):-
+	Next == 1, not(final(CurrentState)).
 
 emptyList:-
 		asserta(analiseList([])).

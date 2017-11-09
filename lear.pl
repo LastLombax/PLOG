@@ -1,6 +1,7 @@
 :- include('prints.pl').
 :- include('logic.pl').
 :- include('stateMachine.pl').
+:- use_module(library(clpfd)).
 
 :- dynamic state/3.
 
@@ -32,21 +33,24 @@ verifyRule(Board, NLine, NCol):-
 		getLine(Board, NLine, Line),
 		testState(Line, NewLine, 'X '),
 		write('Old Line: '), write(Line), nl,
-		transpose(Board, TBoard),
 		write('New Line for Board: '), write(NewLine), nl,
+		transpose(Board, TBoard),
+		write('New transposed board 1: '), nl,
+		printBoard(TBoard), nl,
+		getLine(TBoard, NCol, Col),
+		testState(Col, NewCol, 'X '),
+		write('Old Col: '), write(Col), nl,
+		write('New Col for Board: '), write(NewCol), nl,
+		transpose(TBoard, XBoard),
+		write('New transposed board 2: '), nl,
+		printBoard(XBoard), nl.
 		%transposta da matrix e depois getLine again. Depois das mudanças, voltar a dar transposta.
-		getColu(Board, NCol, Colu).
 
 
 getLine([H|_],1,H).
 getLine([_|T],I,X) :-
     I1 is I-1,
     getLine(T,I1,X).
-
-getColu([],_,[]).
-getColu([H|T], I, [R|X]):-
-   getLine(H, I, R),
-	 getColu(T,I,X).
 
 
 % The Prefix MUST begin with the 1st element(Head) of the list
@@ -99,3 +103,19 @@ setNColumn(Pos, [X|Tail], Piece, [X|NewTail]):-
 		Next is Pos-1,
 		setNColumn(Next, Tail, Piece, NewTail).
 
+
+
+%------------TRANSPOSES A MATRIX-------------
+
+transpose([], []).
+transpose([F|Fs], Ts) :-
+    transpose(F, [F|Fs], Ts).
+
+transpose([], _, []).
+transpose([_|Rs], Ms, [Ts|Tss]) :-
+        lists_firsts_rests(Ms, Ts, Ms1),
+        transpose(Rs, Ms1, Tss).
+
+lists_firsts_rests([], [], []).
+lists_firsts_rests([[F|Os]|Rest], [F|Fs], [Os|Oss]) :-
+        lists_firsts_rests(Rest, Fs, Oss).
