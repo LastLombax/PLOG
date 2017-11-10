@@ -47,7 +47,7 @@ final(12).
 
 %listA(['O ', 'O ', 'O ', 'X ', 'O ', 'O ', 'X ', 'X ']).
 
-testState(List, NewList):-assert(matrixList(List)), assert(analiseList([])),
+testState(List, NewList):- write('here'), assert(matrixList(List)), assert(analiseList([])),
 		finite_state(1, List, Result, 0), retract(matrixList(NewList)), write('NewListFinal: '), write(NewList), nl.
 	%	retract(analiseList(_)).	  % First state and index = 0(1st element)
 
