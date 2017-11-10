@@ -1,15 +1,17 @@
 :- include('prints.pl').
 :- include('logic.pl').
+:- include('stateMachine.pl').
+:- use_module(library(clpfd)).
 
 :- dynamic state/3.
 
 
 initialBoard([
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
+	[emptyCell, emptyCell, emptyCell, emptyCell, 'X ', emptyCell, emptyCell, emptyCell],
 	[emptyCell, 'X ', 'O ', 'O ', 'X ', emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
+	[emptyCell, emptyCell, emptyCell, 'X ', 'X ', emptyCell, emptyCell, emptyCell],
+	[emptyCell, emptyCell, emptyCell, 'O ', 'O ', emptyCell, emptyCell, emptyCell],
+	[emptyCell, emptyCell, emptyCell, 'O ', 'O ', emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
 	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell]]).
@@ -27,28 +29,22 @@ lear:- initialBoard(Board), printBoard(Board), getCoordsFromUser(NLine, NCol), v
 % I is the NthRow and H is the Row
 
 
-verifyRule(Board, NLine, NCol) :-
+verifyRule(Board, NLine, NCol, FinalBoard):-
 		getLine(Board, NLine, Line),
-		%transposta da matrix e depois getLine again. Depois das mudanças, voltar a dar transposta.
-		getColu(Board, NCol, Colu),
-		verifyLine(Line),
-		verifyColumn(Col).
-
-
-verifyLine([]).
-verifyLine([H|T]):-
-
+		testState(Line, NewLine, 'X '),
+		replace(Board, NLine-1, NewLine, NewBoard),
+		transpose(NewBoard, TBoard),
+		getLine(TBoard, NCol, Col),
+		testState(Col, NewCol, 'X '),
+		replace(TBoard, NCol-1, NewCol, NewBoard2),
+		transpose(NewBoard2, FinalBoard),
+		printBoard(FinalBoard), nl.
 
 
 getLine([H|_],1,H).
 getLine([_|T],I,X) :-
     I1 is I-1,
     getLine(T,I1,X).
-
-getColu([],_,[]).
-getColu([H|T], I, [R|X]):-
-   getLine(H, I, R),
-	 getColu(T,I,X).
 
 
 % The Prefix MUST begin with the 1st element(Head) of the list
@@ -67,11 +63,6 @@ suffix(S,[H|T]) :- suffix(S,T).
 sublist(Sb,L) :- prefix(Sb,L).
 sublist(Sb,[H|T]) :- sublist(Sb,T).
 
-
-% Verifies if X is member of the list
-
-member(X,[X|T]).
-member(X,[H|T]) :- member(X,T).
 
 
 %------------GET PIECE-------------
@@ -107,4 +98,18 @@ setNColumn(Pos, [X|Tail], Piece, [X|NewTail]):-
 		setNColumn(Next, Tail, Piece, NewTail).
 
 
-compare2Lists(ListA, ListB):- ListA == ListB.
+
+%------------TRANSPOSES A MATRIX-------------
+
+transpose([], []).
+transpose([F|Fs], Ts) :-
+    transpose(F, [F|Fs], Ts).
+
+transpose([], _, []).
+transpose([_|Rs], Ms, [Ts|Tss]) :-
+        lists_firsts_rests(Ms, Ts, Ms1),
+        transpose(Rs, Ms1, Tss).
+
+lists_firsts_rests([], [], []).
+lists_firsts_rests([[F|Os]|Rest], [F|Fs], [Os|Oss]) :-
+        lists_firsts_rests(Rest, Fs, Oss).
