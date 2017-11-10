@@ -158,17 +158,16 @@ replace([H|T], I, PlayerPiece, [H|R]):-
 replace(L, _, _, L).
 
 
-last([Head],X):-
-		X = Head.
-last([_|Tail],X):-
-		last(Tail,X).
 
 
-not(X) :- X, !, fail.
-not(_).
+countScoreLine([], Player, N).
+countScoreLine([Head | Tail], Player, N) :-
+	(
+		Head == Player -> 	NextN is N+1, countScoreLine(Tail, Player, NextN);
+		Head \= Player -> countScoreLine(Tail, Player, N)
+	).
 
-ite(If, Then, _):- If, !, Then.
-ite(_, _, Else):- Else.
-
-it(If, Then):- If, !, Then.
-it(_,_).
+countScore([] , Player, N, NextN).
+countScore([Head | Tail], Player, N, NextN):-
+	countScoreLine(Head, Player, N),
+	countScore(Tail, Player, N, N).

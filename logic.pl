@@ -6,17 +6,18 @@ play :-
 		retract(state(Board, Count, Player)),
 			printCurrentInfo(Board, Player),
 			format('Count = ~p', [Count]), nl,
-			once(move(Board, Player, NextBoard)),
+			once(move(Board, Player, FinalBoard)),
 			changePlayer(Player, NextPlayer),
 			Counter is Count - 1,
-		assert(state(NextBoard, Counter, NextPlayer)),
+		assert(state(FinalBoard, Counter, NextPlayer)),
 		endGame(Counter).
 
 
-move(Board, Player, NextBoard):-
+move(Board, Player, FinalBoard):-
 		repeat,
 			getCoordsFromUser(NLine, NCol),
-			check(Board, NLine, NCol, NextBoard, Player).
+			check(Board, NLine, NCol, NextBoard, Player),
+			verifyRule(NextBoard, NLine, NCol, Player, FinalBoard).
 
 
 getCoordsFromUser(NLine, NCol):-
@@ -32,6 +33,18 @@ check(Board, NLine, NCol, NextBoard, Player) :-
 	).
 
 
+verifyRule(Board, NLine, NCol, Player, FinalBoard):-
+		getLine(Board, NLine, Line),
+		testState(Line, NewLine, Player),
+		replace(Board, NLine-1, NewLine, NewBoard),
+		transpose(NewBoard, TBoard),
+		getLine(TBoard, NCol, Col),
+		testState(Col, NewCol, Player),
+		replace(TBoard, NCol-1, NewCol, NewBoard2),
+		transpose(NewBoard2, FinalBoard),
+		printBoard(FinalBoard), nl.
+
+
 changePlayer('O ', 'X ').
 changePlayer('X ', 'O ').
 
@@ -39,6 +52,3 @@ changePlayer('X ', 'O ').
 endGame(Count) :-
 	Count == 0,
 	write('Acabou'), nl.
-
-
-% ( condition -> then_condition; else_condition)
