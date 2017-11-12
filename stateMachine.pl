@@ -24,6 +24,7 @@ arcX(6,'X ',7).
 arcX(7,'X ',7).
 arcX(7,'O ',8).
 arcX(8,'O ',9).
+arcX(8,'X ',6).
 arcX(9,'O ',9).
 arcX(9,'X ',6).
 
@@ -55,6 +56,7 @@ arcO(6,'O ',7).
 arcO(7,'O ',7).
 arcO(7,'X ',8).
 arcO(8,'X ',9).
+arcO(8,'O ',6).
 arcO(9,'X ',9).
 arcO(9,'O ',6).
 
@@ -85,13 +87,14 @@ testState(List, NewList, CurrPlayer):- assert(matrixList(List)), assert(analiseL
 finite_state(Start, [], Start, _, _).
 finite_state(done, _, done, _, _) :- !.
 finite_state(Start, [Input | Inputs], Finish, Index, Player) :-
+		 write('Index: '), write(Index), nl,
 		 ite(Player == 'X ',  arcX(Start, Input, Next), arcO(Start, Input, Next)),
 		 (
 			 Input \= emptyCell,
 			 analiseList(AuxList),
 			 length(AuxList, Length),
 			 (
-			 		Length > 0 -> verifyState(AuxList, Next, Index, State);
+			 		Length > 0 ->	 verifyState(AuxList, Next, Index, State);
 					Length == 0 -> addToEmptyList(AuxList, Input, Index)
 			 ),
 			 it( checkCaseB(Start, Input,Player, Index), capturePiecesOnList(Player)),
@@ -145,7 +148,7 @@ verifyState(AuxList, Next, Index,CurrentState):-
 %-----------------CHECKS IF CURRENT STATE IS NOT FINAL AND THE NEXT IS 1--------------------
 
 checkState(CurrentState, Next):-
-	Next == 1, not(final(CurrentState)).
+	Next == 1, not(final(CurrentState)), write('checkhere'), nl.
 
 
 %----------------EMPTIES THE AUXILIAR LIST--------------------
@@ -158,6 +161,8 @@ emptyList:-
 
 addToList(AuxList, Index):-
 		append(AuxList, [Index], NewAuxList),
+		write('AuxList'), write(AuxList), nl,
+		write('NewAuxList'), write(NewAuxList), nl,
 		asserta(analiseList(NewAuxList)).
 
 
