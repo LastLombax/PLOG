@@ -160,14 +160,16 @@ replace(L, _, _, L).
 
 
 
-countScoreLine([], Player, N).
+countScoreLine([], Player, 0).
 countScoreLine([Head | Tail], Player, N) :-
 	(
-		Head == Player -> 	NextN is N+1, countScoreLine(Tail, Player, NextN);
+		Head == Player -> countScoreLine(Tail, Player, NextN), N is NextN + 1;
 		Head \= Player -> countScoreLine(Tail, Player, N)
 	).
 
-countScore([] , Player, N, NextN).
-countScore([Head | Tail], Player, N, NextN):-
+
+countScore([] , Player, 0).
+countScore([Head | Tail], Player, NTotal):-
+	countScore(Tail, Player, NextNTotal),
 	countScoreLine(Head, Player, N),
-	countScore(Tail, Player, N, N).
+	NTotal is NextNTotal + N.
