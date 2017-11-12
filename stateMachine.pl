@@ -87,7 +87,6 @@ testState(List, NewList, CurrPlayer):- assert(matrixList(List)), assert(analiseL
 finite_state(Start, [], Start, _, _).
 finite_state(done, _, done, _, _) :- !.
 finite_state(Start, [Input | Inputs], Finish, Index, Player) :-
-		 write('Index: '), write(Index), nl,
 		 ite(Player == 'X ',  arcX(Start, Input, Next), arcO(Start, Input, Next)),
 		 (
 			 Input \= emptyCell,
@@ -148,7 +147,7 @@ verifyState(AuxList, Next, Index,CurrentState):-
 %-----------------CHECKS IF CURRENT STATE IS NOT FINAL AND THE NEXT IS 1--------------------
 
 checkState(CurrentState, Next):-
-	Next == 1, not(final(CurrentState)), write('checkhere'), nl.
+	Next == 1, not(final(CurrentState)).
 
 
 %----------------EMPTIES THE AUXILIAR LIST--------------------
@@ -161,8 +160,6 @@ emptyList:-
 
 addToList(AuxList, Index):-
 		append(AuxList, [Index], NewAuxList),
-		write('AuxList'), write(AuxList), nl,
-		write('NewAuxList'), write(NewAuxList), nl,
 		asserta(analiseList(NewAuxList)).
 
 
