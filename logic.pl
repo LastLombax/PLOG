@@ -51,4 +51,14 @@ changePlayer('X ', 'O ').
 
 endGame(Count) :-
 	Count == 0,
-	write('Acabou'), nl.
+	retract(state(FBoard, Count, Player)),
+	checkWinner(FBoard).
+
+checkWinner(FBoard):-
+		countScore(FBoard, 'X ', XCount),
+		countScore(FBoard, 'O ', OCount),
+		(
+				XCount > OCount -> write('Congratulations, Black Team! You win the game!'), nl;
+				OCount > XCount -> write('Congratulations, White Team! You win the game!'), nl;
+				XCount == OCount -> write('The game ended in a draw!'), nl
+		).

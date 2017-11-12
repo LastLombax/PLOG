@@ -3,6 +3,7 @@
 :- include('stateMachine.pl').
 :- include('utilities.pl').
 :- include('ia.pl').
+:- include('menu.pl').
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
 :- use_module(library(between)).
@@ -33,11 +34,15 @@ initialBoardForTesting([
 		[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell]]).
 
 
-startGame(Board):-
+startGame:-
+	 initialBoard(Board),
 	 assert(state(Board, 64, 'X ')),
 	 play.
 
-lear:- initialBoardForTesting(Board), printBoard(Board), countScore(Board, 'X ', Num), write(Num), nl, getCoordsFromUser(NLine, NCol).
+%lear:- initialBoardForTesting(Board), printBoard(Board), countScore(Board, 'O ', Num), write(Num), nl, getCoordsFromUser(NLine, NCol).
 
 
 %lear:- initialBoard(Board), startGame(Board).
+
+
+lear:- mainMenuLear.

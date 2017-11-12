@@ -58,10 +58,44 @@ setNColumn(Pos, [X|Tail], Piece, [X|NewTail]):-
 
 %--------COUNT NUM OF OCCURRENCES IN LIST----------
 
-countPieces([_], [], 0).
-countPieces([Word], [Word|Tail], Count):-
-   countPieces([Word], Tail, X),
-   Count is X + 1.
-countPieces([Word], [Z|Tail], Count):-
-   Word \= Z,
-   countPieces([Word], Tail, Count).
+countScoreLine([], Player, 0).
+countScoreLine([Head | Tail], Player, N) :-
+	(
+		Head == Player -> countScoreLine(Tail, Player, NextN), N is NextN + 1;
+		Head \= Player -> countScoreLine(Tail, Player, N)
+	).
+
+
+countScore([] , Player, 0).
+countScore([Head | Tail], Player, NTotal):-
+	countScore(Tail, Player, NextNTotal),
+	countScoreLine(Head, Player, N),
+	NTotal is NextNTotal + N.
+
+
+%------------WAIT FOR ENTER INPUT----------
+
+pressEnterToContinue:-
+	write('Press <Enter> to continue.'), nl,
+	waitForEnter, !.
+
+waitForEnter:-
+	get_char(_).
+
+
+%------------CLEARS THE CONSOLE----------
+clearTheConsole:-
+	clearTheConsole(40), !.
+
+clearTheConsole(0).
+clearTheConsole(N):-
+	nl,
+	N1 is N-1,
+	clearTheConsole(N1).
+
+
+%------------GETS THE INPUT----------
+
+getChar(Input):-
+	get_char(Input),
+	get_char(_).

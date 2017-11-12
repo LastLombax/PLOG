@@ -156,20 +156,3 @@ replace([H|T], I, PlayerPiece, [H|R]):-
 		NI is I-1,
 		replace(T, NI, PlayerPiece, R), !.
 replace(L, _, _, L).
-
-
-
-
-countScoreLine([], Player, 0).
-countScoreLine([Head | Tail], Player, N) :-
-	(
-		Head == Player -> countScoreLine(Tail, Player, NextN), N is NextN + 1;
-		Head \= Player -> countScoreLine(Tail, Player, N)
-	).
-
-
-countScore([] , Player, 0).
-countScore([Head | Tail], Player, NTotal):-
-	countScore(Tail, Player, NextNTotal),
-	countScoreLine(Head, Player, N),
-	NTotal is NextNTotal + N.
