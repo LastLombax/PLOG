@@ -60,7 +60,36 @@ printgameModeMenu:-
 	write(' -------------------------------'), nl,
 	write('Choose an option(without the dot):'), nl.
 
+%------------AI LEVEL MENU PRINT---------------
 
+printAILevelMenu:-
+	clearTheConsole,
+	write(' -------------------------------'), nl,
+	write('|           AI LEVEL            |'), nl,
+	write('|                               |'), nl,
+	write('|   1. Random Plays             |'), nl,
+	write('|   2. Choose best Play         |'), nl,
+	write('|   3. Back                     |'), nl,
+	write('|                               |'), nl,
+	write(' -------------------------------'), nl,
+	write('Choose an option(without the dot):'), nl.
+
+
+%------------AI LEVEL MENU---------------
+
+chooseAILevelMenu(Dif):-
+	printAILevelMenu,
+	getChar(Input),
+	(
+		Input = '1' -> Dif is 0;
+		Input = '2' -> Dif is 1;
+		Input = '3' -> mainMenuLear, fail;
+
+		nl,
+		write('Error: invalid input.'), nl,
+		pressEnterToContinue, nl,
+		gameModeMenu
+	).
 %------------STARTS PLAYER VS PLAYER------------
 
 startPvPGame:-
@@ -70,12 +99,18 @@ startPvPGame:-
 %------------STARTS PLAYER VS AI---------------
 
 startPvBGame:-
-	createPvBGame(Game),
-	playGame(Game).
+	chooseAILevelMenu(Dif),
+	initialBoard(Board),
+	assert(state(Board, 64, 'X ')),
+	playPvBGame(Dif),
+	retract(state(_, _, _)).
 
 
 %------------STARTS AI VS AI---------------
 
 startBvBGame:-
-	createBvBGame(Game),
-	playGame(Game).
+	chooseAILevelMenu(Dif),
+	initialBoard(Board),
+	assert(state(Board, 64, 'X ')),
+	playBvBGame(Dif),
+	retract(state(_, _, _)).

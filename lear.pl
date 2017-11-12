@@ -8,6 +8,8 @@
 :- use_module(library(lists)).
 :- use_module(library(between)).
 :- use_module(library(aggregate)).
+:- use_module(library(random)).
+:- use_module(library(system)).
 
 :- dynamic state/3.
 :- dynamic bestMoveScore/4.
@@ -42,7 +44,8 @@ initialBoard([
 startGame:-
 	 initialBoard(Board),
 	 assert(state(Board, 64, 'X ')),
-	 play.
+	 play,
+	 retract(state(_, _, _)).
 
 %------PREDICATE THAT STARTS THE PROGRAM--------
 

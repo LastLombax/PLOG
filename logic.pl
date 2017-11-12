@@ -22,6 +22,17 @@ move(Board, Player, FinalBoard):-
 			verifyRule(NextBoard, NLine, NCol, Player, FinalBoard).
 
 
+%------------HANDLES THE COMPUTER PLAY-------------
+
+moveComputer(Board, Player, Dif, FinalBoard):-
+		(
+			Dif == 0 -> randomMove(Board, Player, NLine, NCol);
+			Dif == 1 -> predict(Board, Player, Dif, NLine, NCol)
+		),
+		check(Board, NLine, NCol, NextBoard, Player),
+		verifyRule(NextBoard, NLine, NCol, Player, FinalBoard).
+		
+
 %------------GETS COORDS FROM USER-------------
 
 getCoordsFromUser(NLine, NCol):-
@@ -35,7 +46,8 @@ check(Board, NLine, NCol, NextBoard, Player) :-
 	getPiece(Board, NLine, NCol, X),
 	(
 		X == emptyCell -> setPiece(Board, NLine, NCol, Player, NextBoard);
-		X \= emptyCell -> write('There is already a piece there! Try again!'), nl, fail
+		X \= emptyCell -> write('There is already a piece there! Try again!'), nl,
+							fail
 	).
 
 
@@ -49,8 +61,8 @@ verifyRule(Board, NLine, NCol, Player, FinalBoard):-
 		getLine(TBoard, NCol, Col),
 		testState(Col, NewCol, Player),
 		replace(TBoard, NCol-1, NewCol, NewBoard2),
-		transpose(NewBoard2, FinalBoard),
-		printBoard(FinalBoard), nl.
+		transpose(NewBoard2, FinalBoard).
+		%printBoard(FinalBoard), nl.
 
 
 %------------CHANGES CURRENT PLAYER-------------
@@ -77,3 +89,31 @@ checkWinner(FBoard):-
 				OCount > XCount -> write('Congratulations, White Team! You win the game!'), nl;
 				XCount == OCount -> write('The game ended in a draw!'), nl
 		).
+
+
+%------------PLAYS PLAYER VS AI---------------		
+playPvBGame(Dif):-
+	repeat,
+		retract(state(Board, Count, Player)),
+			printCurrentInfo(Board, Player),
+			format('Count = ~p', [Count]), nl,
+			ite(Player == 'X ', once(move(Board, Player, FinalBoard)), (once(moveComputer(Board, Player, Dif, FinalBoard)), sleep(1))),
+			changePlayer(Player, NextPlayer),
+			Counter is Count - 1,
+		assert(state(FinalBoard, Counter, NextPlayer)),
+		endGame(Counter).
+
+
+%------------PLAYS AI VS AI---------------
+playBvBGame(Dif):-
+	repeat,		
+		retract(state(Board, Count, Player)),
+			printCurrentInfo(Board, Player),
+			format('Count = ~p', [Count]), nl,
+			once(moveComputer(Board, Player, Dif, FinalBoard)),
+			sleep(1),
+			changePlayer(Player, NextPlayer),
+			Counter is Count - 1,
+		assert(state(FinalBoard, Counter, NextPlayer)),
+		endGame(Counter).
+	
