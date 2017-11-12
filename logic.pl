@@ -1,5 +1,5 @@
 
-%------------GAME STATE-------------
+%------------GAME LOOP-------------
 
 play :-
 	repeat,
@@ -13,6 +13,8 @@ play :-
 		endGame(Counter).
 
 
+%------------HANDLES THE PLAY-------------
+
 move(Board, Player, FinalBoard):-
 		repeat,
 			getCoordsFromUser(NLine, NCol),
@@ -20,10 +22,14 @@ move(Board, Player, FinalBoard):-
 			verifyRule(NextBoard, NLine, NCol, Player, FinalBoard).
 
 
+%------------GETS COORDS FROM USER-------------
+
 getCoordsFromUser(NLine, NCol):-
 		write('Type Board Coordinates: (Line. <enter> Column.)'), nl,
 		read(NLine), nl, read(NCol).
 
+
+%------------CHECKS IF CELL IS EMPTY-------------
 
 check(Board, NLine, NCol, NextBoard, Player) :-
 	getPiece(Board, NLine, NCol, X),
@@ -32,6 +38,8 @@ check(Board, NLine, NCol, NextBoard, Player) :-
 		X \= emptyCell -> write('There is already a piece there! Try again!'), nl, fail
 	).
 
+
+%------------TRIES TO CAPTURE PIECES-------------
 
 verifyRule(Board, NLine, NCol, Player, FinalBoard):-
 		getLine(Board, NLine, Line),
@@ -45,14 +53,21 @@ verifyRule(Board, NLine, NCol, Player, FinalBoard):-
 		printBoard(FinalBoard), nl.
 
 
+%------------CHANGES CURRENT PLAYER-------------
+
 changePlayer('O ', 'X ').
 changePlayer('X ', 'O ').
 
+
+%------------CHECKS FOR END GAME-------------
 
 endGame(Count) :-
 	Count == 0,
 	retract(state(FBoard, Count, Player)),
 	checkWinner(FBoard).
+
+
+%------------CHECKS THE WINNER-------------
 
 checkWinner(FBoard):-
 		countScore(FBoard, 'X ', XCount),

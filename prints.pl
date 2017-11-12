@@ -9,6 +9,9 @@ printBoardAux([Head|Tail]) :-
         printRow(Head),
         printBoard(Tail).
 
+
+%------------PRINTS A ROW-------------
+
 printRow([]) :- nl.
 printRow([emptyCell|Tail]) :-
         write('  '),
@@ -21,6 +24,9 @@ printRow([Head|Tail]) :-
         write('|'),
         printRow(Tail).
 
+
+%------------PRINTS A LINE SEPARATOR-------------
+
 printLineSeparator(1):- write('|'), nl.
 printLineSeparator(NLines):-
 		write('|'),
@@ -32,12 +38,14 @@ printRowSeparator:-
 		write('------------------------'), nl.
 
 
-
-%-----------PRINT INFO-------------
+%-----------PRINTS CURRENT INFO-------------
 
 printCurrentInfo(Board, Player):-
 		printBoard(Board),
 		printCurrentPlayer(Player).
+
+
+%-----------PRINTS WHOSE TURN IS IT-------------
 
 printCurrentPlayer(Player):-
 	write('It is your turn, '),

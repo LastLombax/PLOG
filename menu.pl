@@ -1,6 +1,6 @@
-%=================%
-%= @@ game menus =%
-%=================%
+
+%------------MAIN MENU---------------
+
 mainMenuLear:-
 	printMainMenu,
 	getChar(Input),
@@ -14,6 +14,9 @@ mainMenuLear:-
 		mainMenuLear
 	).
 
+
+%------------MAIN MENU PRINT---------------
+
 printMainMenu:-
 	clearTheConsole,
 	write(' -------------------------------'), nl,
@@ -25,6 +28,7 @@ printMainMenu:-
 	write(' -------------------------------'), nl,
 	write('Choose an option(without the dot):'), nl.
 
+%----------GAME MODE MENU-------------
 
 gameModeMenu:-
 	printgameModeMenu,
@@ -41,6 +45,8 @@ gameModeMenu:-
 		gameModeMenu
 	).
 
+%------------GAME MODE MENU PRINT---------------
+
 printgameModeMenu:-
 	clearTheConsole,
 	write(' -------------------------------'), nl,
@@ -54,12 +60,22 @@ printgameModeMenu:-
 	write(' -------------------------------'), nl,
 	write('Choose an option(without the dot):'), nl.
 
+
+%------------STARTS PLAYER VS PLAYER------------
+
 startPvPGame:-
 	startGame.
+
+
+%------------STARTS PLAYER VS AI---------------
 
 startPvBGame:-
 	createPvBGame(Game),
 	playGame(Game).
+
+
+%------------STARTS AI VS AI---------------
+
 startBvBGame:-
 	createBvBGame(Game),
 	playGame(Game).
