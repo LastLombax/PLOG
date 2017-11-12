@@ -35,8 +35,8 @@ gameModeMenu:-
 	getChar(Input),
 	(
 		Input = '1' -> startPvPGame;
-		Input = '2' -> startPvBGame;
-		Input = '3' -> startBvBGame;
+		Input = '2' -> chooseAILevelMenu;
+		Input = '3' -> chooseAILevelMenu;
 		Input = '4' -> mainMenuLear;
 
 		nl,
@@ -59,6 +59,38 @@ printgameModeMenu:-
 	write('|                               |'), nl,
 	write(' -------------------------------'), nl,
 	write('Choose an option(without the dot):'), nl.
+
+
+%------------AI LEVEL MENU PRINT---------------
+
+printAILevelMenu:-
+	clearTheConsole,
+	write(' -------------------------------'), nl,
+	write('|           AI LEVEL            |'), nl,
+	write('|                               |'), nl,
+	write('|   1. Random Plays             |'), nl,
+	write('|   2. Checks 2 plays ahead     |'), nl,
+	write('|   3. Back                     |'), nl,
+	write('|                               |'), nl,
+	write(' -------------------------------'), nl,
+	write('Choose an option(without the dot):'), nl.
+
+
+%------------AI LEVEL MENU---------------
+
+chooseAILevelMenu:-
+	printAILevelMenu,
+	getChar(Input),
+	(
+		Input = '1' -> startPvBGame;
+		Input = '2' -> startPvBGame;
+		Input = '3' -> mainMenuLear;
+
+		nl,
+		write('Error: invalid input.'), nl,
+		pressEnterToContinue, nl,
+		gameModeMenu
+	).
 
 
 %------------STARTS PLAYER VS PLAYER------------
