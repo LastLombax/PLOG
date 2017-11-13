@@ -35,8 +35,8 @@ gameModeMenu:-
 	getChar(Input),
 	(
 		Input = '1' -> startPvPGame;
-		Input = '2' -> chooseAILevelMenu;
-		Input = '3' -> chooseAILevelMenu;
+		Input = '2' -> startPvBGame;
+		Input = '3' -> startBvBGame;
 		Input = '4' -> mainMenuLear;
 
 		nl,
