@@ -103,8 +103,7 @@ startPvBGame:-
 	chooseAILevelMenu(Dif),
 	initialBoard(Board),
 	assert(state(Board, 64, 'X ')),
-	playPvBGame(Dif),
-	retract(state(_, _, _)).
+	playPvBGame(Dif).
 
 
 %------------STARTS AI VS AI---------------
@@ -113,5 +112,4 @@ startBvBGame:-
 	chooseAILevelMenu(Dif),
 	initialBoard(Board),
 	assert(state(Board, 64, 'X ')),
-	playBvBGame(Dif),
-	retract(state(_, _, _)).
+	playBvBGame(Dif).

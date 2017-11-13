@@ -18,7 +18,7 @@ bestMove(Board, CurrPlayer, MovesForward, First, FirstLine, FirstCol) :-
 	
 %-----------------SIMULATE 1 MOVE AND CHANGES PLAYER--------------------
 project(Board, CurrPlayer, MovesForward, NLine, NCol, First, FirstLine, FirstCol) :-
-	check(Board, NLine, NCol, NextBoard, CurrPlayer),
+	check(Board, NLine, NCol, NextBoard, CurrPlayer, true),
 	verifyRule(NextBoard, NLine, NCol, CurrPlayer, FinalBoard),
 	changePlayer(CurrPlayer, NextPlayer),
 	NextMoves is MovesForward - 1,
@@ -39,7 +39,7 @@ predict(Board, Player, Difficulty, Line, Col) :-
 	
 randomMove(Board, Player, Line, Col):-
 	repeat,
-		random(1, 9, RLine),
-		random(1, 9, RCol),
-		check(Board, RLine, RCol, NextBoard, Player), !.
+		random(1, 9, Line),
+		random(1, 9, Col),
+		check(Board, Line, Col, NextBoard, Player, true), !.
 	

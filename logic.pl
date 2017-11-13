@@ -18,7 +18,7 @@ play :-
 move(Board, Player, FinalBoard):-
 		repeat,
 			getCoordsFromUser(NLine, NCol),
-			check(Board, NLine, NCol, NextBoard, Player),
+			check(Board, NLine, NCol, NextBoard, Player, false),
 			verifyRule(NextBoard, NLine, NCol, Player, FinalBoard).
 
 
@@ -29,7 +29,7 @@ moveComputer(Board, Player, Dif, FinalBoard):-
 			Dif == 0 -> randomMove(Board, Player, NLine, NCol);
 			Dif == 1 -> predict(Board, Player, Dif, NLine, NCol)
 		),
-		check(Board, NLine, NCol, NextBoard, Player),
+		check(Board, NLine, NCol, NextBoard, Player, true),
 		verifyRule(NextBoard, NLine, NCol, Player, FinalBoard).
 
 
@@ -42,11 +42,11 @@ getCoordsFromUser(NLine, NCol):-
 
 %------------CHECKS IF CELL IS EMPTY-------------
 
-check(Board, NLine, NCol, NextBoard, Player) :-
+check(Board, NLine, NCol, NextBoard, Player, Computer) :-
 	getPiece(Board, NLine, NCol, X),
 	(
 		X == emptyCell -> setPiece(Board, NLine, NCol, Player, NextBoard);
-		X \= emptyCell -> write('There is already a piece there! Try again!'), nl,
+		X \= emptyCell -> it(not(Computer), (write('There is already a piece there! Try again!'), nl)),
 							fail
 	).
 
@@ -103,8 +103,17 @@ playPvBGame(Dif):-
 		endGame(Counter).
 
 
+%------------PREPARES BOARD ADD 2 RANDOM PIECES---------------
+prepareBoardBvB:-
+	retract(state(Board, Count, Player)),
+	moveComputer(Board, 'X ', 0, Board2),
+	moveComputer(Board2, 'O ', 0, FinalBoard),
+	Counter is Count - 2,
+	assert(state(FinalBoard, Counter, Player)).
+
 %------------PLAYS AI VS AI---------------
 playBvBGame(Dif):-
+	it(Dif == 1, prepareBoardBvB),
 	repeat,
 		retract(state(Board, Count, Player)),
 			printCurrentInfo(Board, Player),

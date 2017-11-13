@@ -44,8 +44,7 @@ initialBoard([
 startGame:-
 	 initialBoard(Board),
 	 assert(state(Board, 64, 'X ')),
-	 play,
-	 retract(state(_, _, _)).
+	 play.
 
 %------PREDICATE THAT STARTS THE PROGRAM--------
 
