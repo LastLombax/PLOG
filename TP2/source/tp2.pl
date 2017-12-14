@@ -1,56 +1,33 @@
-:- include('prints.pl').
-:- include('logic.pl').
-:- include('stateMachine.pl').
-:- include('utilities.pl').
-:- include('ia.pl').
-:- include('menu.pl').
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
 :- use_module(library(between)).
+:- use_module(library(sets)).
 :- use_module(library(aggregate)).
 :- use_module(library(random)).
 :- use_module(library(system)).
 
-:- dynamic state/3.
-:- dynamic bestMoveScore/4.
 
+matrixLength(N, Rows) :-
+        length(Rows, N),
+        maplist(length_list(N), Rows).
 
-initialBoardForTesting([
-	[emptyCell, emptyCell, emptyCell, emptyCell, 'X ', emptyCell, emptyCell, emptyCell],
-	[emptyCell, 'X ', 'O ', 'O ', 'X ', emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, 'X ', 'X ', emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, 'O ', 'O ', emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, 'O ', 'O ', emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, 'O ', emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell]]).
+length_list(L, Ls) :- length(Ls, L).
 
+checkLine([], _, _, false).
+checkLine([], [Hs], Acc, true):- %write(Acc), write(Hs), nl.
+                                  !, sum(Acc, #=, Hs).
+checkLine(['X' | T], Sums, _, false):-
+	checkLine(T, Sums, [], false).
 
-%-----------INITIATES AN EMPTY BOARD-----------
+checkLine(['X' | T], [Hs | Ts], Acc, true):-
+  %write(Acc), write(Hs), nl,
+  !, sum(Acc, #=, Hs),
+	checkLine(T, Ts, [], false).
 
-initialBoard([
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell],
-	[emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell, emptyCell]]).
+%-----------State indica se o último elemento analisado foi um número (true) ou um X/célula vazia (false). O valor inicial é false
+checkLine([H | T], [Hs | Ts], Acc, _):-
+	checkLine(T, [Hs | Ts], [H | Acc], true).
 
-
-%-----------STARTS THE GAME-----------
-
-startGame:-
-	 initialBoard(Board),
-	 assert(state(Board, 64, 'X ')),
-	 play.
-
-%------PREDICATE THAT STARTS THE PROGRAM--------
-
-%lear:- initialBoardForTesting(Board), printBoard(Board), countScore(Board, 'O ', Num), write(Num), nl, getCoordsFromUser(NLine, NCol).
-
-%lear:- initialBoard(Board), startGame(Board).
-
-
-lear:- mainMenuLear.
+japanese_sums(Board, NumSet, ColSums, LineSums, Size):-
+	matrixLength(Size, Board),
+  checkLine(['X', 'X', 4, 5, 1, 'X', 'X', 1, 3, 'X', 9, 'X', 'X', 'X'], [10, 4, 9], [], false).
