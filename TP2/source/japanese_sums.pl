@@ -68,7 +68,7 @@ restrictMultipleSums([HLine | TLine], [HSum | TSum]) :-
   element(Length, HLine, 0),
   restrictMultipleSums(TLine, TSum).
 
-
+% ----------Used to calculate the execution time--------------
 call_time(G,T) :-
    statistics(runtime,[T0|_]),
    G,
@@ -80,7 +80,12 @@ call_time(G,T) :-
 
 
 % ----------An example test--------------
-test(Solution):-
+test1(Solution):-
   Left = [_, [3, 1], [5], [4]],
   Up = [[4], [1, 4], [2], [4]],
+  japaneseSum(Left, Up, Solution).
+
+test2(Solution):-
+  Left = [_, [3, 1], [5], [4], [7 , 1], [2, 2]],
+  Up = [[4], [1, 4], [2], [4], _, [2, 6]],
   japaneseSum(Left, Up, Solution).
