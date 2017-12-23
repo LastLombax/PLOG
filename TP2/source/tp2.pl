@@ -33,24 +33,14 @@ restLists(NumSet, [H|T], NewSet):-
 sumSet(NumSet, Nums):-
   element(N, LineSum, S).
 
-checkLine([], _, _, false).
-checkLine([], [Hs], Acc, true):- %write(Acc), write(Hs), nl.
-                                  !, sum(Acc, #=, Hs).
-checkLine([0 | T], Sums, _, false):-
-	checkLine(T, Sums, [], false).
-
-checkLine([0 | T], [Hs | Ts], Acc, true):-
-  %write(Acc), write(Hs), nl,
-  !, sum(Acc, #=, Hs),
-	checkLine(T, Ts, [], false).
 
 %-----------State indica se o último elemento analisado foi um número (true) ou um X/célula vazia (false). O valor inicial é false
 
 checkLine([], _, _, false).
 checkLine([], [Hs], Acc, true) :- sum(Acc, #=, Hs).
 checkLine([H | T], [Hs | Ts], Acc, State):-
-	(H #= 0 #/\ State #= false)#<=> checkLine(T, [Hs | Ts], Acc, false),
-	(H #= 0 #/\ State #= true)#<=> (sum(Acc, #=, Hs) #/\ checkLine(T, Ts, [], false)),
+	(H #= 0 #/\ State #= false)#=> checkLine(T, [Hs | Ts], Acc, false),
+	(H #= 0 #/\ State #= true)#=> (sum(Acc, #=, Hs) #/\ checkLine(T, Ts, [], false)),
 	 H #\= 0 #=> checkLine(T, [Hs | Ts], [H | Acc], true).
 
 

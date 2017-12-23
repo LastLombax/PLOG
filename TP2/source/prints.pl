@@ -36,7 +36,6 @@ printLineSeparator(NLines):-
 
 printRowSeparator(0):-write('-'),nl.
 printRowSeparator(Length):-
-	 write(Length), nl,
 		write('--'),
 		L is Length-1,
 		printRowSeparator(L).
