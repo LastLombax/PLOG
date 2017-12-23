@@ -1,5 +1,6 @@
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
+:- use_module(library(statistics)).
 
 % ----------Returns the Solution with Left sums(lines) and Up sums(columns)--------------
 japaneseSum(Left, Up, Solution) :-
@@ -14,6 +15,7 @@ japaneseSum(Left, Up, Solution) :-
   transpose(TransposedSolution, FinalSolution),
   labeling([], FlatSolution),
   maplist(portray_clause, Solution).
+  %call_time(true,T_ms).
 
 
 % ----------Restrains each Line of the Board, using the getLine predicate--------------
@@ -65,6 +67,17 @@ restrictMultipleSums([HLine | TLine], [HSum | TSum]) :-
   Length #> 0,
   element(Length, HLine, 0),
   restrictMultipleSums(TLine, TSum).
+
+
+call_time(G,T) :-
+   statistics(runtime,[T0|_]),
+   G,
+   statistics(runtime,[T1|_]),
+   T is T0 - T1,
+   write(T0), nl,
+   write(T1), nl,
+   write(T).
+
 
 % ----------An example test--------------
 test(Solution):-
